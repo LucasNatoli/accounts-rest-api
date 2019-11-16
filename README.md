@@ -5,9 +5,12 @@ Restful API for user accounts management.
 ## Prerequisites
 
 ### Node
+
+This service is a Node.js app. 
+
 * version: v8.10.0
 * [Home](https://nodejs.org)
-* Dependencies:
+* Dependencies
 
 
 ### Npm
@@ -46,7 +49,7 @@ Then start the service using: `node start index.js`
 
 ## Dependencies / Acknowledgements / Help references
 
-This service runs as a Node.js app. The npm modules (or packages) used are:
+This service is a Node.js app. The npm modules (or packages) used are:
 
 * [body-parser (^1.19.0)](https://www.npmjs.com/package/body-parser)
 * [credential (^2.0.0)](https://www.npmjs.com/package/credential)
