@@ -88,11 +88,10 @@ module.exports = (app, models) => {
           verifyPassword(storedHash, password).then(
             result => {
               if (result) {
-                //SESSION SUPPORT temporalmente deshabilitado
-/*                 var sess = req.session
+                var sess = req.session
                 sess.email = email
                 sess.fullname = result.fullname
-                sess.save */
+                sess.save
                 res.status(200).end()
               } else {
                 res.status(401).send() // No coincide el password
@@ -120,7 +119,6 @@ module.exports = (app, models) => {
   })
 
   app.get(END_POINT + '/check-session', (req, res) => {
-    // SESSION SUPPORT 
     var sess = req.session
     if (sess && sess.email) {   
       res.status(200).send([
