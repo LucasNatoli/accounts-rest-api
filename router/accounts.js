@@ -1,11 +1,11 @@
 'use strict';
+
 const credential = require('credential')
 
 function hashPassword (password) {
   return new Promise((resolve, reject) => {
     var pw = credential()
     pw.hash(password, (err, hash)=>{
-
       if (err) {
         reject(err)
       }else{
@@ -44,7 +44,6 @@ function findByEmail(email, account){
 }
 
 module.exports = (app, db) => {
-  
   app.post('/register', (req, res) => {
     var fullname = req.body.fullname;
     var phone = req.body.phone;
@@ -76,14 +75,11 @@ module.exports = (app, db) => {
         }
       }
     )
-
-
   })
 
   app.post('/login', (req, res) =>{
     var email = req.body.email;
     var password = req.body.password;
-    console.log('finding account: ', email)
     findByEmail(email, db.account).then(
       account => {
         if (account) {
@@ -98,23 +94,21 @@ module.exports = (app, db) => {
                 sess.save */
                 res.status(200).end()
               } else {
-                // No coincide el password
-                res.status(401).send()
+                res.status(401).send() // No coincide el password
               }
             },
             err => {
-              // No se puedo verificar el hash
-              res.status(500).send
+              console.log("No se puedo verificar el hash: ", err)
+              res.status(500).send // No se puedo verificar el hash
             }
           )
         } else {
-          // No existe el email en la base de datos
-          res.status(401).send()
+          res.status(401).send() // No existe el email en la base de datos
         }
       },
       err => {
-        // No se pudo hacer la busqueda en la base de datos
-        res.status(500).send()
+        console.log("No se pudo hacer la busqueda en la base de datos", err)
+        res.status(500).send() // No se pudo hacer la busqueda en la base de datos
       }
     )
   })
@@ -125,7 +119,7 @@ module.exports = (app, db) => {
   })
 
   app.get('/check-session', (req, res) => {
-    
+    // SESSION SUPPORT 
     var sess = req.session
     if (sess && sess.email) {   
       res.status(200).send([
