@@ -1,13 +1,13 @@
 const env = process.env;
 const Sequelize = require('sequelize');
-console.log('dbuser', env.MYAPP_DB_USER)
+console.log('dbuser', env.USRACCNT_DB_USER)
 const sequelize = new Sequelize(
-    env.MYAPP_DB_NAME,
-    env.MYAPP_DB_USER,
-    env.MYAPP_DB_PASSWORD,
+    env.USRACCNT_DB_NAME,
+    env.USRACCNT_DB_USER,
+    env.USRACCNT_DB_PASSWORD,
     {
-        host: env.MYAPP_DB_HOST,
-        port: env.MYAPP_DB_PORT,
+        host: env.USRACCNT_DB_HOST,
+        port: env.USRACCNT_DB_PORT,
         dialect: 'mysql',
         define: {
             underscored: true

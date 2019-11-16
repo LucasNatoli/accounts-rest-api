@@ -1,12 +1,12 @@
 const express = require('express')
+const bodyParser = require('body-parser')
 const models = require('./models')
 const router = require('./router')
-const bodyParser = require('body-parser')
 const app = express()
 
 const env = process.env;
 
-const PORT = env.MYAPP_PORT
+const PORT = env.USRACCNT_PORT;
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))

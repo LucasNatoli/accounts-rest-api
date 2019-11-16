@@ -44,21 +44,7 @@ function findByEmail(email, account){
 }
 
 module.exports = (app, db) => {
-  app.post('/checkmail', (req, res) => {
-    var email = req.body.email;
-    // chequear si ya existe el email
-    findByEmail(email, db.account).then(
-      account => {
-        res.send(account)
-      },
-      err => {
-        console.log('error findByEmail', err);
-        res.status(500)
-      }
-    )
-
-  })
-
+  
   app.post('/register', (req, res) => {
     var fullname = req.body.fullname;
     var phone = req.body.phone;
@@ -151,4 +137,20 @@ module.exports = (app, db) => {
       res.status(401).send()
     }
   })
+
+
+/*   app.post('/checkmail', (req, res) => {
+    var email = req.body.email;
+    // chequear si ya existe el email
+    findByEmail(email, db.account).then(
+      account => {
+        res.send(account)
+      },
+      err => {
+        console.log('error findByEmail', err);
+        res.status(500)
+      }
+    )
+
+  }) */  
 }
