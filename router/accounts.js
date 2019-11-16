@@ -44,12 +44,12 @@ function findByEmail(email, account){
   })
 }
 
-module.exports = (app, db) => {
+module.exports = (app, models) => {
   app.post(END_POINT + '/register', (req, res) => {
     var fullname = req.body.fullname;
     var phone = req.body.phone;
     var email = req.body.email;
-    findByEmail(email, db.account).then(
+    findByEmail(email, models.account).then(
       account => {
         if(account){
           // El email existe
@@ -59,7 +59,7 @@ module.exports = (app, db) => {
           hashPassword(req.body.password).then(
             (hash)=>{
               var password = hash;
-              db.account.create({
+              models.account.create({
                 fullname: fullname,
                 phone: phone,
                 email: email,
@@ -81,7 +81,7 @@ module.exports = (app, db) => {
   app.post(END_POINT + '/login', (req, res) =>{
     var email = req.body.email;
     var password = req.body.password;
-    findByEmail(email, db.account).then(
+    findByEmail(email, models.account).then(
       account => {
         if (account) {
           var storedHash = account.get('password')
@@ -132,20 +132,4 @@ module.exports = (app, db) => {
       res.status(401).send()
     }
   })
-
-
-/*   app.post('/checkmail', (req, res) => {
-    var email = req.body.email;
-    // chequear si ya existe el email
-    findByEmail(email, db.account).then(
-      account => {
-        res.send(account)
-      },
-      err => {
-        console.log('error findByEmail', err);
-        res.status(500)
-      }
-    )
-
-  }) */  
 }
