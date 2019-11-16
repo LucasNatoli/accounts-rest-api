@@ -39,9 +39,9 @@ Then start the service using: `node start index.js`
 | Method       | endpoint      | VERB  | Descripcion         |
 | ------------ |:------------- | :---: | --------------------|
 | register     | /v1/accounts  | POST  | Register an account |
-login| /v1/accounts          | POST   | Process login request |
-| logout         | /v1/accounts  | GET   | Logout user and finish current session |
-| check-session         | /v1/accounts  | GET   | Check if there is a live current session |
+| login        | /v1/accounts  | POST  | Process login request |
+| logout       | /v1/accounts  | GET   | Logout user and finish current session |
+| check-session| /v1/accounts  | GET   | Check if there is a live current session |
 
 
 ## Acknowledgements / Help references
