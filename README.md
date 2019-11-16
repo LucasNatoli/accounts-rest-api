@@ -44,10 +44,16 @@ Then start the service using: `node start index.js`
 | check-session| /v1/accounts  | GET   | Check if there is a live current session |
 
 
-## Acknowledgements / Help references
+## Dependencies / Acknowledgements / Help references
 
-* Node 
-* npm
+This service runs as a Node.js app. The npm modules (or packages) used are:
+
+* body-parser (1.19.0)
+* credential (2.0.0)
+* express (4.17.1)
+* mysql2 (2.0.0)
+* sequelize (5.21.2)
+* https://www.npmjs.com/package/express-session
 
 ## Contact information
 
