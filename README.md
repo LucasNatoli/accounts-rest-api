@@ -48,11 +48,11 @@ Then start the service using: `node start index.js`
 
 This service runs as a Node.js app. The npm modules (or packages) used are:
 
-* [body-parser (^1.19.0)]()
-* [credential (^2.0.0)]()
-* [express (^4.17.1)]()
-* [mysql2 (^2.0.0)]()
-* [sequelize (^5.21.2)]()
+* [body-parser (^1.19.0)](https://www.npmjs.com/package/body-parser)
+* [credential (^2.0.0)](https://www.npmjs.com/package/credential)
+* [express (^4.17.1)](https://www.npmjs.com/package/express)
+* [mysql2 (^2.0.0)](https://www.npmjs.com/package/mysql2)
+* [sequelize (^5.21.2)](https://sequelize.org/)
 * [express-session (^1.17.0)](https://www.npmjs.com/package/express-session)
 * [connect-sqlite3 (^0.9.11)](https://www.npmjs.com/package/connect-sqlite3)
 ## Contact information
