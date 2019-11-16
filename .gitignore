@@ -1,5 +1,5 @@
 # Session storage
-.sqlite3/sess.db
+sess.db
 
 # Logs
 logs

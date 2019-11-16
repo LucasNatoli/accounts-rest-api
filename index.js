@@ -13,7 +13,7 @@ const PORT = env.USRACCNT_PORT;
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(session({
-  store: new SQLiteStore({dir: '.sqlite3', db: 'sess.db'}),
+  store: new SQLiteStore({dir: '.', db: 'sess.db'}),
   secret: 'aCaTtYpeDTh1sS3kre7',
   resave: false,
   saveUninitialized: true,
