@@ -114,18 +114,18 @@ module.exports = (app, models) => {
   })
 
   app.get(END_POINT + '/logout', (req, res) => {
-    req.session = null
-    res.status(200).send()
+    if (req.session) { 
+      req.session.destroy() 
+      res.status(200).send()
+    } else {
+      res.status(401).send()
+    }    
   })
 
   app.get(END_POINT + '/check-session', (req, res) => {
     var sess = req.session
     if (sess && sess.email) {   
-      res.status(200).send([
-        {
-          serverTime: (new Date).getTime()
-        }
-      ])      
+      res.status(200).send([{ serverTime: (new Date).getTime() }])      
     } else {
       res.status(401).send()
     }
