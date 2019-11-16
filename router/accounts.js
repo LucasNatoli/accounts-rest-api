@@ -1,6 +1,7 @@
 'use strict';
 
 const credential = require('credential')
+const END_POINT = '/v1/accounts'
 
 function hashPassword (password) {
   return new Promise((resolve, reject) => {
@@ -44,7 +45,7 @@ function findByEmail(email, account){
 }
 
 module.exports = (app, db) => {
-  app.post('/register', (req, res) => {
+  app.post(END_POINT + '/register', (req, res) => {
     var fullname = req.body.fullname;
     var phone = req.body.phone;
     var email = req.body.email;
@@ -77,7 +78,7 @@ module.exports = (app, db) => {
     )
   })
 
-  app.post('/login', (req, res) =>{
+  app.post(END_POINT + '/login', (req, res) =>{
     var email = req.body.email;
     var password = req.body.password;
     findByEmail(email, db.account).then(
@@ -113,12 +114,12 @@ module.exports = (app, db) => {
     )
   })
 
-  app.get('/logout', (req, res) => {
+  app.get(END_POINT + '/logout', (req, res) => {
     req.session = null
     res.status(200).send()
   })
 
-  app.get('/check-session', (req, res) => {
+  app.get(END_POINT + '/check-session', (req, res) => {
     // SESSION SUPPORT 
     var sess = req.session
     if (sess && sess.email) {   
