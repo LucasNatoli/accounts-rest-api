@@ -146,22 +146,6 @@ module.exports = (app, models) => {
     )
   })
 
-  app.get(END_POINT + '/logout', (req, res) => {
-    /* 
-    if (req.session) {
-      req.session.destroy()
-      res.status(200).send()
-    } else {
-      res.status(401).send()
-    } 
-    */
-
-    /*
-    REMOVE JW TOKEN ?
-    */
-    res.status(200).send()
-  })
-
   app.get(
     END_POINT + '/check-session',
     (req, res, next) => {checkToken(req, res, next)},
