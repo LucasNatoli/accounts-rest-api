@@ -1,6 +1,3 @@
-# Session storage
-sess.db
-
 # Logs
 logs
 *.log

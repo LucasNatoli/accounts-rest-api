@@ -1,15 +1,16 @@
 'use strict';
 
 const credential = require('credential')
+const jwt = require('jsonwebtoken');
 const END_POINT = '/v1/accounts'
 
-function hashPassword (password) {
+function hashPassword(password) {
   return new Promise((resolve, reject) => {
     var pw = credential()
-    pw.hash(password, (err, hash)=>{
+    pw.hash(password, (err, hash) => {
       if (err) {
         reject(err)
-      }else{
+      } else {
         resolve(hash)
       }
     })
@@ -17,22 +18,22 @@ function hashPassword (password) {
 }
 
 function verifyPassword(hash, password) {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     var pw = credential()
-    pw.verify(hash, password, (err, isValid)=>{
+    pw.verify(hash, password, (err, isValid) => {
       if (err) {
         reject(err)
-      }else {
+      } else {
         resolve(isValid)
       }
     })
   })
 }
 
-function findByEmail(email, account){
-  return new Promise(function(resolve, reject) {
+function findByEmail(email, account) {
+  return new Promise(function (resolve, reject) {
     account.findOne({
-      where: {email: email}
+      where: { email: email }
     }).then(
       account => {
         resolve(account)
@@ -44,6 +45,32 @@ function findByEmail(email, account){
   })
 }
 
+let checkToken = (req, res, next) => {
+  let token = req.headers['x-access-token'] || req.headers['authorization']; // Express headers are auto converted to lowercase
+  if (token) {
+    if (token.startsWith('Bearer ')) {
+      token = token.slice(7, token.length); // Remove Bearer from string
+    }    
+    jwt.verify(token, 'thisSecretShouldGoInconfig.secret', (err, decoded) => {
+      if (err) {
+        return res.json({
+          success: false,
+          message: 'Token is not valid'
+        });
+      } else {
+        req.decoded = decoded;
+        next();
+      }
+    });
+  } else {
+    return res.json({
+      success: false,
+      message: 'Auth token is not supplied'
+    });
+  }
+};
+
+
 module.exports = (app, models) => {
   app.post(END_POINT + '/register', (req, res) => {
     var fullname = req.body.fullname;
@@ -51,13 +78,13 @@ module.exports = (app, models) => {
     var email = req.body.email;
     findByEmail(email, models.account).then(
       account => {
-        if(account){
+        if (account) {
           // El email existe
           res.status(401).send() //TODO: Investigar que codigo de error se devuelve por account publicada
         } else {
           // se puede crear la account
           hashPassword(req.body.password).then(
-            (hash)=>{
+            (hash) => {
               var password = hash;
               models.account.create({
                 fullname: fullname,
@@ -68,7 +95,7 @@ module.exports = (app, models) => {
                 res.status(200).end()
               })
             },
-            (err)=>{
+            (err) => {
               console.log(err)
               res.status(500).send
             }
@@ -78,7 +105,7 @@ module.exports = (app, models) => {
     )
   })
 
-  app.post(END_POINT + '/login', (req, res) =>{
+  app.post(END_POINT + '/login', (req, res) => {
     var email = req.body.email;
     var password = req.body.password;
     findByEmail(email, models.account).then(
@@ -88,13 +115,19 @@ module.exports = (app, models) => {
           verifyPassword(storedHash, password).then(
             result => {
               if (result) {
-                var sess = req.session
-                sess.email = email
-                sess.fullname = result.fullname
-                sess.save
-                res.status(200).end()
+                let token = jwt.sign({ email: email },
+                  'thisSecretShouldGoInconfig.secret',
+                  {
+                    expiresIn: '24h' // expires in 24 hours
+                  }
+                );
+                res.status(200).send({
+                  success: true,
+                  message: 'Authentication successful!',
+                  token: token
+                })
               } else {
-                res.status(401).send() // No coincide el password
+                res.status(403).send() // No coincide el password
               }
             },
             err => {
@@ -103,7 +136,7 @@ module.exports = (app, models) => {
             }
           )
         } else {
-          res.status(401).send() // No existe el email en la base de datos
+          res.status(403).send() // No existe el email en la base de datos
         }
       },
       err => {
@@ -113,21 +146,13 @@ module.exports = (app, models) => {
     )
   })
 
-  app.get(END_POINT + '/logout', (req, res) => {
-    if (req.session) { 
-      req.session.destroy() 
-      res.status(200).send()
-    } else {
-      res.status(401).send()
-    }    
-  })
-
-  app.get(END_POINT + '/check-session', (req, res) => {
-    var sess = req.session
-    if (sess && sess.email) {   
-      res.status(200).send([{ serverTime: (new Date).getTime() }])      
-    } else {
-      res.status(401).send()
-    }
-  })
+  app.get(
+    END_POINT + '/check-session',
+    (req, res, next) => {checkToken(req, res, next)},
+    (req, res) => {
+      res.status(200).send([{ 
+        serverTime: (new Date).getTime(),
+        decoded: req.decoded
+      }])
+    })
 }
