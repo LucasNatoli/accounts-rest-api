@@ -1,6 +1,7 @@
 'use strict';
 
 const credential = require('credential')
+const jwt = require('jsonwebtoken');
 const END_POINT = '/v1/accounts'
 
 function hashPassword(password) {
@@ -88,17 +89,16 @@ module.exports = (app, models) => {
           verifyPassword(storedHash, password).then(
             result => {
               if (result) {
-                /* 
-                MUST GENERATE JWT TOKEN AND 
-                RESPONSE USER CREDENTIALS OBJECT 
-                */
-                /*
-                  var sess = req.session
-                sess.email = email
-                sess.fullname = result.fullname
-                sess.save 
-                */
-                res.status(200).end()
+                let token = jwt.sign({email: email},
+                  'thisSecretShouldGoInconfig.secret',
+                  { expiresIn: '24h' // expires in 24 hours
+                  }
+                );
+                res.status(200).send({
+                  success: true,
+                  message: 'Authentication successful!',
+                  token: token
+                })
               } else {
                 res.status(401).send() // No coincide el password
               }
