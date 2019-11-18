@@ -45,6 +45,32 @@ function findByEmail(email, account) {
   })
 }
 
+let checkToken = (req, res, next) => {
+  let token = req.headers['x-access-token'] || req.headers['authorization']; // Express headers are auto converted to lowercase
+  if (token) {
+    if (token.startsWith('Bearer ')) {
+      token = token.slice(7, token.length); // Remove Bearer from string
+    }    
+    jwt.verify(token, 'thisSecretShouldGoInconfig.secret', (err, decoded) => {
+      if (err) {
+        return res.json({
+          success: false,
+          message: 'Token is not valid'
+        });
+      } else {
+        req.decoded = decoded;
+        next();
+      }
+    });
+  } else {
+    return res.json({
+      success: false,
+      message: 'Auth token is not supplied'
+    });
+  }
+};
+
+
 module.exports = (app, models) => {
   app.post(END_POINT + '/register', (req, res) => {
     var fullname = req.body.fullname;
@@ -89,9 +115,10 @@ module.exports = (app, models) => {
           verifyPassword(storedHash, password).then(
             result => {
               if (result) {
-                let token = jwt.sign({email: email},
+                let token = jwt.sign({ email: email },
                   'thisSecretShouldGoInconfig.secret',
-                  { expiresIn: '24h' // expires in 24 hours
+                  {
+                    expiresIn: '24h' // expires in 24 hours
                   }
                 );
                 res.status(200).send({
@@ -100,7 +127,7 @@ module.exports = (app, models) => {
                   token: token
                 })
               } else {
-                res.status(401).send() // No coincide el password
+                res.status(403).send() // No coincide el password
               }
             },
             err => {
@@ -109,7 +136,7 @@ module.exports = (app, models) => {
             }
           )
         } else {
-          res.status(401).send() // No existe el email en la base de datos
+          res.status(403).send() // No existe el email en la base de datos
         }
       },
       err => {
@@ -132,17 +159,16 @@ module.exports = (app, models) => {
     /*
     REMOVE JW TOKEN ?
     */
-   res.status(200).send()
+    res.status(200).send()
   })
 
-  app.get(END_POINT + '/check-session', (req, res) => {
-    
-    //USE TOKEN
-    //var sess = req.session
-    if (sess && sess.email) {
-      res.status(200).send([{ serverTime: (new Date).getTime() }])
-    } else {
-      res.status(401).send()
-    }
-  })
+  app.get(
+    END_POINT + '/check-session',
+    (req, res, next) => {checkToken(req, res, next)},
+    (req, res) => {
+      res.status(200).send([{ 
+        serverTime: (new Date).getTime(),
+        decoded: req.decoded
+      }])
+    })
 }
