@@ -1,7 +1,5 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-const session = require('express-session')
-const SQLiteStore = require('connect-sqlite3')(session)
 
 const models = require('./models')
 const router = require('./router')
@@ -12,13 +10,6 @@ const PORT = env.USRACCNT_PORT;
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
-app.use(session({
-  store: new SQLiteStore({dir: '.', db: 'sess.db'}),
-  secret: 'aCaTtYpeDTh1sS3kre7',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 }
-}))
 
 // Add CORS headers
 app.use((req, res, next) => {

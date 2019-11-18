@@ -3,13 +3,13 @@
 const credential = require('credential')
 const END_POINT = '/v1/accounts'
 
-function hashPassword (password) {
+function hashPassword(password) {
   return new Promise((resolve, reject) => {
     var pw = credential()
-    pw.hash(password, (err, hash)=>{
+    pw.hash(password, (err, hash) => {
       if (err) {
         reject(err)
-      }else{
+      } else {
         resolve(hash)
       }
     })
@@ -17,22 +17,22 @@ function hashPassword (password) {
 }
 
 function verifyPassword(hash, password) {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     var pw = credential()
-    pw.verify(hash, password, (err, isValid)=>{
+    pw.verify(hash, password, (err, isValid) => {
       if (err) {
         reject(err)
-      }else {
+      } else {
         resolve(isValid)
       }
     })
   })
 }
 
-function findByEmail(email, account){
-  return new Promise(function(resolve, reject) {
+function findByEmail(email, account) {
+  return new Promise(function (resolve, reject) {
     account.findOne({
-      where: {email: email}
+      where: { email: email }
     }).then(
       account => {
         resolve(account)
@@ -51,13 +51,13 @@ module.exports = (app, models) => {
     var email = req.body.email;
     findByEmail(email, models.account).then(
       account => {
-        if(account){
+        if (account) {
           // El email existe
           res.status(401).send() //TODO: Investigar que codigo de error se devuelve por account publicada
         } else {
           // se puede crear la account
           hashPassword(req.body.password).then(
-            (hash)=>{
+            (hash) => {
               var password = hash;
               models.account.create({
                 fullname: fullname,
@@ -68,7 +68,7 @@ module.exports = (app, models) => {
                 res.status(200).end()
               })
             },
-            (err)=>{
+            (err) => {
               console.log(err)
               res.status(500).send
             }
@@ -78,7 +78,7 @@ module.exports = (app, models) => {
     )
   })
 
-  app.post(END_POINT + '/login', (req, res) =>{
+  app.post(END_POINT + '/login', (req, res) => {
     var email = req.body.email;
     var password = req.body.password;
     findByEmail(email, models.account).then(
@@ -88,10 +88,16 @@ module.exports = (app, models) => {
           verifyPassword(storedHash, password).then(
             result => {
               if (result) {
-                var sess = req.session
+                /* 
+                MUST GENERATE JWT TOKEN AND 
+                RESPONSE USER CREDENTIALS OBJECT 
+                */
+                /*
+                  var sess = req.session
                 sess.email = email
                 sess.fullname = result.fullname
-                sess.save
+                sess.save 
+                */
                 res.status(200).end()
               } else {
                 res.status(401).send() // No coincide el password
@@ -114,18 +120,27 @@ module.exports = (app, models) => {
   })
 
   app.get(END_POINT + '/logout', (req, res) => {
-    if (req.session) { 
-      req.session.destroy() 
+    /* 
+    if (req.session) {
+      req.session.destroy()
       res.status(200).send()
     } else {
       res.status(401).send()
-    }    
+    } 
+    */
+
+    /*
+    REMOVE JW TOKEN ?
+    */
+   res.status(200).send()
   })
 
   app.get(END_POINT + '/check-session', (req, res) => {
-    var sess = req.session
-    if (sess && sess.email) {   
-      res.status(200).send([{ serverTime: (new Date).getTime() }])      
+    
+    //USE TOKEN
+    //var sess = req.session
+    if (sess && sess.email) {
+      res.status(200).send([{ serverTime: (new Date).getTime() }])
     } else {
       res.status(401).send()
     }
