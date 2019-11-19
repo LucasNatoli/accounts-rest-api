@@ -3,6 +3,7 @@
 const credential = require('credential')
 const jwt = require('jsonwebtoken');
 const END_POINT = '/v1/accounts'
+const MSG_INVALID_TOKEN = 'Invalid authorization header'
 
 function hashPassword(password) {
   return new Promise((resolve, reject) => {
@@ -50,23 +51,17 @@ let checkToken = (req, res, next) => {
   if (token) {
     if (token.startsWith('Bearer ')) {
       token = token.slice(7, token.length); // Remove Bearer from string
-    }    
+    }
     jwt.verify(token, 'thisSecretShouldGoInconfig.secret', (err, decoded) => {
       if (err) {
-        return res.json({
-          success: false,
-          message: 'Token is not valid'
-        });
+        return res.json({ error: MSG_INVALID_TOKEN });
       } else {
         req.decoded = decoded;
         next();
       }
     });
   } else {
-    return res.json({
-      success: false,
-      message: 'Auth token is not supplied'
-    });
+    return res.json({ error: MSG_INVALID_TOKEN });
   }
 };
 
@@ -115,16 +110,14 @@ module.exports = (app, models) => {
           verifyPassword(storedHash, password).then(
             result => {
               if (result) {
-                let token = jwt.sign({ email: email },
+                let token = jwt.sign(
+                  { email: email },
                   'thisSecretShouldGoInconfig.secret',
-                  {
-                    expiresIn: '24h' // expires in 24 hours
-                  }
+                  { expiresIn: '24h' }
                 );
                 res.status(200).send({
-                  success: true,
-                  message: 'Authentication successful!',
-                  token: token
+                  token: token,
+                  fullname: account.get('fullname')
                 })
               } else {
                 res.status(403).send() // No coincide el password
@@ -148,9 +141,9 @@ module.exports = (app, models) => {
 
   app.get(
     END_POINT + '/check-session',
-    (req, res, next) => {checkToken(req, res, next)},
+    (req, res, next) => { checkToken(req, res, next) },
     (req, res) => {
-      res.status(200).send([{ 
+      res.status(200).send([{
         serverTime: (new Date).getTime(),
         decoded: req.decoded
       }])
