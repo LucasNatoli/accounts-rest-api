@@ -4,6 +4,7 @@ const credential = require('credential')
 const jwt = require('jsonwebtoken');
 const END_POINT = '/v1/accounts'
 const MSG_INVALID_TOKEN = 'Invalid authorization header'
+const MSG_INVALID_CREDENTIALS = 'The credentials you priveded are not valid. Please try again'
 
 function hashPassword(password) {
   return new Promise((resolve, reject) => {
@@ -120,20 +121,18 @@ module.exports = (app, models) => {
                   fullname: account.get('fullname')
                 })
               } else {
-                res.status(403).send() // No coincide el password
+                res.status(403).send({message: MSG_INVALID_CREDENTIALS}) // No coincide el password
               }
             },
             err => {
-              console.log("No se puedo verificar el hash: ", err)
               res.status(500).send // No se puedo verificar el hash
             }
           )
         } else {
-          res.status(403).send() // No existe el email en la base de datos
+          res.status(403).send( { message: MSG_INVALID_CREDENTIALS}) // No existe el email en la base de datos
         }
       },
       err => {
-        console.log("No se pudo hacer la busqueda en la base de datos", err)
         res.status(500).send() // No se pudo hacer la busqueda en la base de datos
       }
     )
