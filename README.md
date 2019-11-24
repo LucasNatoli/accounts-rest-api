@@ -29,6 +29,7 @@ export USRACCNT_DB_NAME=my_app
 export USRACCNT_DB_USER=my_app
 export USRACCNT_DB_PASSWORD=my_app_password
 export USRACCNT_PORT=3000
+export USRACCNT_JWT_SECRET=you_must_change_this_value
 ```
 
 ## How to install

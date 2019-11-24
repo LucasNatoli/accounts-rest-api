@@ -1,10 +1,11 @@
 'use strict';
-
+const env = process.env;
 const credential = require('credential')
 const jwt = require('jsonwebtoken');
 const END_POINT = '/v1/accounts'
 const MSG_INVALID_TOKEN = 'Invalid authorization header'
 const MSG_INVALID_CREDENTIALS = 'The credentials you priveded are not valid. Please try again'
+const jwtSecret = env.USRACCNT_JWT_SECRET;
 
 function hashPassword(password) {
   return new Promise((resolve, reject) => {
@@ -48,12 +49,13 @@ function findByEmail(email, account) {
 }
 
 let checkToken = (req, res, next) => {
+  console.log('checkToken secret: ', jwtSecret)
   let token = req.headers['x-access-token'] || req.headers['authorization']; // Express headers are auto converted to lowercase
   if (token) {
     if (token.startsWith('Bearer ')) {
       token = token.slice(7, token.length); // Remove Bearer from string
     }
-    jwt.verify(token, 'thisSecretShouldGoInconfig.secret', (err, decoded) => {
+    jwt.verify(token, jwtSecret, (err, decoded) => {
       if (err) {
         return res.status(400).send({ error: MSG_INVALID_TOKEN });
       } else {
@@ -104,6 +106,8 @@ module.exports = (app, models) => {
   app.post(END_POINT + '/login', (req, res) => {
     var email = req.body.email;
     var password = req.body.password;
+    console.log('env: ', env)
+    console.log('login secret: ', jwtSecret)
     findByEmail(email, models.account).then(
       account => {
         if (account) {
@@ -113,7 +117,7 @@ module.exports = (app, models) => {
               if (result) {
                 let token = jwt.sign(
                   { email: email },
-                  'thisSecretShouldGoInconfig.secret',
+                  jwtSecret,
                   { expiresIn: '24h' }
                 );
                 res.status(200).send({
