@@ -38,12 +38,12 @@ Then start the service using: `node start index.js`
 
 ## How to use
 
-### API Routes
+This service provides the following endpoints:
+
 | Method       | endpoint      | VERB  | Descripcion         |
 | ------------ |:------------- | :---: | --------------------|
 | register     | /v1/accounts  | POST  | Register an account |
 | login        | /v1/accounts  | POST  | Process login request |
-| logout       | /v1/accounts  | GET   | Logout user and finish current session |
 | check-session| /v1/accounts  | GET   | Check if there is a live current session |
 
 
