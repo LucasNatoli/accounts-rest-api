@@ -55,14 +55,14 @@ let checkToken = (req, res, next) => {
     }
     jwt.verify(token, 'thisSecretShouldGoInconfig.secret', (err, decoded) => {
       if (err) {
-        return res.json({ error: MSG_INVALID_TOKEN });
+        return res.status(400).send({ error: MSG_INVALID_TOKEN });
       } else {
         req.decoded = decoded;
         next();
       }
     });
   } else {
-    return res.json({ error: MSG_INVALID_TOKEN });
+    return res.status(400).send({ error: MSG_INVALID_TOKEN });
   }
 };
 
