@@ -49,7 +49,6 @@ function findByEmail(email, account) {
 }
 
 let checkToken = (req, res, next) => {
-  console.log('checkToken secret: ', jwtSecret)
   let token = req.headers['x-access-token'] || req.headers['authorization']; // Express headers are auto converted to lowercase
   if (token) {
     if (token.startsWith('Bearer ')) {
@@ -94,7 +93,6 @@ module.exports = (app, models) => {
               })
             },
             (err) => {
-              console.log(err)
               res.status(500).send
             }
           )
@@ -106,8 +104,6 @@ module.exports = (app, models) => {
   app.post(END_POINT + '/login', (req, res) => {
     var email = req.body.email;
     var password = req.body.password;
-    console.log('env: ', env)
-    console.log('login secret: ', jwtSecret)
     findByEmail(email, models.account).then(
       account => {
         if (account) {

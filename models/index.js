@@ -1,6 +1,5 @@
 const env = process.env;
 const Sequelize = require('sequelize');
-console.log('dbuser', env.USRACCNT_DB_USER)
 const sequelize = new Sequelize(
     env.USRACCNT_DB_NAME,
     env.USRACCNT_DB_USER,
