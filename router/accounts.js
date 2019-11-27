@@ -1,10 +1,11 @@
 'use strict';
+
 const env = process.env;
+const jwtSecret = env.USRACCNT_JWT_SECRET;
+const END_POINT = '/v1/accounts'
 const credential = require('credential')
 const jwt = require('jsonwebtoken');
-const END_POINT = '/v1/accounts'
-const MSG_INVALID_CREDENTIALS = 'The credentials you priveded are not valid. Please try again';
-const jwtSecret = env.USRACCNT_JWT_SECRET;
+const msgs = require('./account.messages')
 const checkToken = require('./check-token');
 const validateEmailAndPassword = require('./validate-email-and-password');
 
@@ -105,7 +106,7 @@ module.exports = (app, models) => {
                     fullname: account.get('fullname')
                   })
                 } else {
-                  res.status(403).send({ message: MSG_INVALID_CREDENTIALS }) // No coincide el password
+                  res.status(403).send(msgs.InvalidCredentials()) // No coincide el password
                 }
               },
               err => {
@@ -113,7 +114,7 @@ module.exports = (app, models) => {
               }
             )
           } else {
-            res.status(403).send({ message: MSG_INVALID_CREDENTIALS }) // No existe el email en la base de datos
+            res.status(403).send(msgs.InvalidCredentials()) // No existe el email en la base de datos
           }
         },
         err => {

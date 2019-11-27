@@ -1,6 +1,7 @@
-const MSG_INVALID_TOKEN = 'Invalid authorization header'
+const msgs = require('./account.messages')
 const jwt = require('jsonwebtoken');
 const jwtSecret = process.env.USRACCNT_JWT_SECRET;
+
 
 function checkToken (req, res, next) {
   let token = req.headers['x-access-token'] || req.headers['authorization']; // Express headers are auto converted to lowercase
@@ -10,14 +11,14 @@ function checkToken (req, res, next) {
     }
     jwt.verify(token, jwtSecret, (err, decoded) => {
       if (err) {
-        return res.status(400).send({ error: MSG_INVALID_TOKEN });
+        return res.status(400).send(msgs.InvalidToken());
       } else {
         req.decoded = decoded;
         next();
       }
     });
   } else {
-    return res.status(400).send({ error: MSG_INVALID_TOKEN });
+    return res.status(400).send(msgs.InvalidToken());
   }
 };
 
