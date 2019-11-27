@@ -67,6 +67,16 @@ let checkToken = (req, res, next) => {
   }
 };
 
+function validateEmailAndPassword(email, password) {
+  const emailType = typeof (email)
+  const passwordType = typeof (password)
+  return (
+    emailType === 'string' &&
+    passwordType === 'string' &&
+    password.length === 128 &&
+    email.length < 320
+  ) ? true : false
+}
 
 module.exports = (app, models) => {
   app.post(END_POINT + '/register', (req, res) => {
@@ -104,38 +114,44 @@ module.exports = (app, models) => {
   app.post(END_POINT + '/login', (req, res) => {
     var email = req.body.email;
     var password = req.body.password;
-    findByEmail(email, models.account).then(
-      account => {
-        if (account) {
-          var storedHash = account.get('password')
-          verifyPassword(storedHash, password).then(
-            result => {
-              if (result) {
-                let token = jwt.sign(
-                  { email: email },
-                  jwtSecret,
-                  { expiresIn: '24h' }
-                );
-                res.status(200).send({
-                  token: token,
-                  fullname: account.get('fullname')
-                })
-              } else {
-                res.status(403).send({message: MSG_INVALID_CREDENTIALS}) // No coincide el password
+    if (!validateEmailAndPassword(email, password)) {
+      res.status(403).send({ message: MSG_INVALID_CREDENTIALS })
+    } else {
+
+      findByEmail(email, models.account).then(
+        account => {
+          if (account) {
+            var storedHash = account.get('password')
+            verifyPassword(storedHash, password).then(
+              result => {
+                if (result) {
+                  let token = jwt.sign(
+                    { email: email },
+                    jwtSecret,
+                    { expiresIn: '24h' }
+                  );
+                  res.status(200).send({
+                    token: token,
+                    fullname: account.get('fullname')
+                  })
+                } else {
+                  res.status(403).send({ message: MSG_INVALID_CREDENTIALS }) // No coincide el password
+                }
+              },
+              err => {
+                res.status(500).send // No se puedo verificar el hash
               }
-            },
-            err => {
-              res.status(500).send // No se puedo verificar el hash
-            }
-          )
-        } else {
-          res.status(403).send( { message: MSG_INVALID_CREDENTIALS}) // No existe el email en la base de datos
+            )
+          } else {
+            res.status(403).send({ message: MSG_INVALID_CREDENTIALS }) // No existe el email en la base de datos
+          }
+        },
+        err => {
+          res.status(500).send() // No se pudo hacer la busqueda en la base de datos
         }
-      },
-      err => {
-        res.status(500).send() // No se pudo hacer la busqueda en la base de datos
-      }
-    )
+      )
+    }
+
   })
 
   app.get(
