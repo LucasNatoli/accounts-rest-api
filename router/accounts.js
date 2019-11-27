@@ -3,9 +3,10 @@ const env = process.env;
 const credential = require('credential')
 const jwt = require('jsonwebtoken');
 const END_POINT = '/v1/accounts'
-const MSG_INVALID_TOKEN = 'Invalid authorization header'
-const MSG_INVALID_CREDENTIALS = 'The credentials you priveded are not valid. Please try again'
+const MSG_INVALID_CREDENTIALS = 'The credentials you priveded are not valid. Please try again';
 const jwtSecret = env.USRACCNT_JWT_SECRET;
+const checkToken = require('./check-token');
+const validateEmailAndPassword = require('./validate-email-and-password');
 
 function hashPassword(password) {
   return new Promise((resolve, reject) => {
@@ -48,36 +49,6 @@ function findByEmail(email, account) {
   })
 }
 
-let checkToken = (req, res, next) => {
-  let token = req.headers['x-access-token'] || req.headers['authorization']; // Express headers are auto converted to lowercase
-  if (token) {
-    if (token.startsWith('Bearer ')) {
-      token = token.slice(7, token.length); // Remove Bearer from string
-    }
-    jwt.verify(token, jwtSecret, (err, decoded) => {
-      if (err) {
-        return res.status(400).send({ error: MSG_INVALID_TOKEN });
-      } else {
-        req.decoded = decoded;
-        next();
-      }
-    });
-  } else {
-    return res.status(400).send({ error: MSG_INVALID_TOKEN });
-  }
-};
-
-function validateEmailAndPassword(email, password) {
-  const emailType = typeof (email)
-  const passwordType = typeof (password)
-  return (
-    emailType === 'string' &&
-    passwordType === 'string' &&
-    password.length === 128 &&
-    email.length < 320
-  ) ? true : false
-}
-
 module.exports = (app, models) => {
   app.post(END_POINT + '/register', (req, res) => {
     var fullname = req.body.fullname;
@@ -111,13 +82,12 @@ module.exports = (app, models) => {
     )
   })
 
-  app.post(END_POINT + '/login', (req, res) => {
-    var email = req.body.email;
-    var password = req.body.password;
-    if (!validateEmailAndPassword(email, password)) {
-      res.status(403).send({ message: MSG_INVALID_CREDENTIALS })
-    } else {
-
+  app.post(
+    END_POINT + '/login',
+    (req, res, next) => validateEmailAndPassword(req, res, next),
+    (req, res) => {      
+      var email = req.body.email;
+      var password = req.body.password;
       findByEmail(email, models.account).then(
         account => {
           if (account) {
@@ -150,9 +120,8 @@ module.exports = (app, models) => {
           res.status(500).send() // No se pudo hacer la busqueda en la base de datos
         }
       )
-    }
 
-  })
+    })
 
   app.get(
     END_POINT + '/check-session',
