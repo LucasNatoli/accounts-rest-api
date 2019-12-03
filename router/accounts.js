@@ -50,6 +50,22 @@ function findByEmail(email, account) {
   })
 }
 
+function findById(id, account) {
+  return new Promise((resolve, reject) => {
+    account.findOne({
+      attributes: ['fullname', 'phone', 'email'],
+      where: { id: id }
+    }).then(
+      account => {
+        resolve(account)
+      },
+      err => {
+        reject(err)
+      }
+    )
+  })
+}
+
 module.exports = (app, models) => {
   app.post(END_POINT + '/register', (req, res) => {
     var fullname = req.body.fullname;
@@ -133,4 +149,19 @@ module.exports = (app, models) => {
         decoded: req.decoded
       }])
     })
+  app.get(
+    END_POINT + '/account-info',
+    (req, res, next) => { checkToken(req, res, next) },
+    (req, res) => {
+      var account_id = req.decoded.id;
+      findById(account_id, models.account).then(
+        account => {
+          res.status(200).send(account)
+        },
+        err => {
+          res.status(500).send() 
+        }
+      )
+    }
+  )
 }
