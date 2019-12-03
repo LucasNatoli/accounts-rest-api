@@ -167,4 +167,21 @@ module.exports = (app, models) => {
     }
   )
 
+  app.put(
+    END_POINT + '/account-info',
+    (req, res, next) => { checkToken(req, res, next) },
+    (req, res) => {
+      var account_id = req.decoded.id;
+      models.account.update(
+        { fullname: req.body.fullname, phone: req.body.phone, email: req.body.email },
+        { returning: true, where: { id: account_id } }
+      ).then(
+        () => {
+          res.status(200).send()
+        }
+      ).catch(
+        res.status(500).send()
+      )
+    }
+  )
 }
