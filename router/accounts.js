@@ -172,15 +172,16 @@ module.exports = (app, models) => {
     (req, res, next) => { checkToken(req, res, next) },
     (req, res) => {
       var account_id = req.decoded.id;
+      var updateValues = { fullname: req.body.fullname, phone: req.body.phone, email: req.body.email }
       models.account.update(
-        { fullname: req.body.fullname, phone: req.body.phone, email: req.body.email },
+        updateValues,
         { returning: true, where: { id: account_id } }
       ).then(
         () => {
           res.status(200).send()
         }
       ).catch(
-        res.status(500).send()
+        err=> {res.status(500).send()}
       )
     }
   )
