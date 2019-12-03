@@ -23,13 +23,13 @@ This service uses enviroment variables to gather config information. You can for
 This configuration you need to add is used to connect to database and for app setup and is as as follows:
 
 ```
-export MYAPP_DB_HOST=localhost
-export MYAPP_DB_PORT=3306
-export MYAPP_DB_NAME=my_app
-export MYAPP_DB_USER=my_app
-export MYAPP_DB_PASSWORD=my_app_password
-export MYAPP_PORT=3000
-export MYAPP_JWT_SECRET=you_must_change_this_value
+export USRACCNT_DB_HOST=localhost
+export USRACCNT_DB_PORT=3306
+export USRACCNT_DB_NAME=my_app
+export USRACCNT_DB_USER=my_app
+export USRACCNT_DB_PASSWORD=my_app_password
+export USRACCNT_PORT=3000
+export USRACCNT_JWT_SECRET=you_must_change_this_value
 ```
 
 ## How to install
