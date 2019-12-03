@@ -97,7 +97,7 @@ module.exports = (app, models) => {
               result => {
                 if (result) {
                   let token = jwt.sign(
-                    { email: email },
+                    { id: account.get('id') },
                     jwtSecret,
                     { expiresIn: '24h' }
                   );
