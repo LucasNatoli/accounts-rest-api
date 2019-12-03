@@ -102,7 +102,7 @@ module.exports = (app, models) => {
   app.post(
     END_POINT + '/login',
     (req, res, next) => validateEmailAndPassword(req, res, next),
-    (req, res) => {      
+    (req, res) => {
       var email = req.body.email;
       var password = req.body.password;
       findByEmail(email, models.account).then(
@@ -145,10 +145,12 @@ module.exports = (app, models) => {
     (req, res, next) => { checkToken(req, res, next) },
     (req, res) => {
       res.status(200).send([{
-        serverTime: (new Date).getTime(),
-        decoded: req.decoded
+        serverTime: Math.floor(Date.now() / 1000),
+        iat: req.decoded.iat,
+        exp: req.decoded.exp
       }])
     })
+
   app.get(
     END_POINT + '/account-info',
     (req, res, next) => { checkToken(req, res, next) },
@@ -159,9 +161,10 @@ module.exports = (app, models) => {
           res.status(200).send(account)
         },
         err => {
-          res.status(500).send() 
+          res.status(500).send()
         }
       )
     }
   )
+
 }
