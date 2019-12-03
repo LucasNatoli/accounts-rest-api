@@ -45,7 +45,7 @@ This service provides the following endpoints:
 | ------------ |:------------- | :---: | --------------------|
 | register     | /v1/accounts  | POST  | Register an account |
 | login        | /v1/accounts  | POST  | Process login request |
-| check-session| /v1/accounts  | GET   | Check if there is a live current session |
+| check-token  | /v1/accounts  | GET   | Check authorization header for valid JWT token |
 
 
 ## Dependencies / Acknowledgements / Help references

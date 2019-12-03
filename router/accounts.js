@@ -125,7 +125,7 @@ module.exports = (app, models) => {
     })
 
   app.get(
-    END_POINT + '/check-session',
+    END_POINT + '/check-token',
     (req, res, next) => { checkToken(req, res, next) },
     (req, res) => {
       res.status(200).send([{
