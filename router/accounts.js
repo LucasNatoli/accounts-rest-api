@@ -43,7 +43,6 @@ function verifyPassword(hash, password) {
 function findByEmail(email, account) {
   return new Promise(function (resolve, reject) {
     account.findOne({
-      attributes: ['fullname', 'phone', 'email'],
       where: { email: email }
     }).then(
       account => { resolve(account) },
@@ -109,7 +108,7 @@ module.exports = (app, models) => {
           if (account) {
             var storedHash = account.get('password')
             verifyPassword(storedHash, password).then(
-              result => {
+              result => {         
                 if (result) {
                   let token = jwt.sign(
                     { id: account.get('id') },
