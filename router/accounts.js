@@ -6,8 +6,13 @@ const END_POINT = '/v1/accounts'
 const credential = require('credential')
 const jwt = require('jsonwebtoken');
 const msgs = require('./account.messages')
-const checkToken = require('./check-token');
-const validateEmailAndPassword = require('./validate-email-and-password');
+
+/**
+ * MdiddleWare
+ */
+const checkToken = require('../middleware').checkToken;
+const validateRequestEmail = require('../middleware').validateRequestEmail;
+const validateRequestPassword = require('../middleware').validateRequestPassword;
 
 function hashPassword(password) {
   return new Promise((resolve, reject) => {
@@ -38,14 +43,11 @@ function verifyPassword(hash, password) {
 function findByEmail(email, account) {
   return new Promise(function (resolve, reject) {
     account.findOne({
+      attributes: ['fullname', 'phone', 'email'],
       where: { email: email }
     }).then(
-      account => {
-        resolve(account)
-      },
-      err => {
-        reject(err)
-      }
+      account => { resolve(account) },
+      err => { reject(err) }
     )
   })
 }
@@ -56,12 +58,8 @@ function findById(id, account) {
       attributes: ['fullname', 'phone', 'email'],
       where: { id: id }
     }).then(
-      account => {
-        resolve(account)
-      },
-      err => {
-        reject(err)
-      }
+      account => { resolve(account) },
+      err => { reject(err) }
     )
   })
 }
@@ -101,7 +99,8 @@ module.exports = (app, models) => {
 
   app.post(
     END_POINT + '/login',
-    (req, res, next) => validateEmailAndPassword(req, res, next),
+    (req, res, next) => validateRequestEmail(req, res, next),
+    (req, res, next) => validateRequestPassword(req, res, next),
     (req, res) => {
       var email = req.body.email;
       var password = req.body.password;
@@ -181,7 +180,7 @@ module.exports = (app, models) => {
           res.status(200).send()
         }
       ).catch(
-        err=> {res.status(500).send()}
+        err => { res.status(500).send() }
       )
     }
   )
