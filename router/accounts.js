@@ -84,7 +84,7 @@ module.exports = (app, models) => {
                 email: email,
                 password: password
               }).then(account => {
-                res.status(200).end()
+                res.status(201).end()
               })
             },
             (err) => {
