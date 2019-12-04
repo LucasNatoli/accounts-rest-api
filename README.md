@@ -46,6 +46,8 @@ This service provides the following endpoints:
 | register     | /v1/accounts  | POST  | Register an account |
 | login        | /v1/accounts  | POST  | Process login request |
 | check-token  | /v1/accounts  | GET   | Check authorization header for valid JWT token |
+| account-info | /v1/accounts  | GET   | Returns current account information based on a valid JWT token |
+| account-info | /v1/accounts  | PUT   | Updates user account based on a valid JWT token |
 
 
 ## Dependencies / Acknowledgements / Help references
