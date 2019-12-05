@@ -66,24 +66,30 @@ This service provides the following endpoints:
 | [login](#login)        | /v1/accounts  | POST  | Process login request |
 | [register](#register)     | /v1/accounts  | POST  | Register an account |
 
-### Account Info GET
+## Account Info GET
+
+Returns current account information based on a valid JWT token
 ```
 GET /v1/accounts/account-info
 ```
 
 **Parameters:**
+```
 NONE
+```
 
 **Response:**
 ```javascript
 {
-"fullname": "User Name",
-"phone": "12345678910",
-"email": "address@email.com"
+  "fullname": "User Name",
+  "phone": "12345678910",
+  "email": "address@email.com"
 }
 ```
 
-### Account Info PUT
+## Account Info PUT
+
+Updates user account based on a valid JWT token
 ```
 PUT /v1/accounts/account-info
 ```
@@ -98,15 +104,21 @@ PUT /v1/accounts/account-info
 ```
 
 **Response:**
+```
 NONE
+```
 
-### Check token
+## Check token
+
+Check authorization header for valid JWT token
 ```
 GET /v1/accounts/check-token
 ```
 
 **Parameters:**
+```
 NONE
+```
 
 **Response:**
 ```javascript
@@ -117,7 +129,9 @@ NONE
 }
 ```
 
-### Login
+## Login
+
+Process login request
 ```
 POST /v1/accounts/login
 ```
@@ -137,11 +151,12 @@ POST /v1/accounts/login
 }
 ```
 
-### Register
+## Register
+
+Register an account
 ```
 POST /v1/accounts/register
 ```
-Register a new account.
 
 **Request Body:**
 ```javascript
@@ -154,7 +169,9 @@ Register a new account.
 ```
 
 **Response:**
+```
 NONE
+```
 
 
 ## Dependencies 
