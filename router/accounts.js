@@ -7,9 +7,6 @@ const credential = require('credential')
 const jwt = require('jsonwebtoken');
 const msgs = require('./account.messages')
 
-/**
- * MdiddleWare
- */
 const checkToken = require('../middleware').checkToken;
 const validateRequestEmail = require('../middleware').validateRequestEmail;
 const validateRequestPassword = require('../middleware').validateRequestPassword;
@@ -63,7 +60,20 @@ function findById(id, account) {
   })
 }
 
+function userInfo(id, fullname) {
+  let token = jwt.sign(
+    { id: id },
+    jwtSecret,
+    { expiresIn: '24h' }
+  );
+  return {
+    token: token,
+    fullname: fullname
+  }
+}
+
 module.exports = (app, models) => {
+
   app.post(END_POINT + '/register', (req, res) => {
     var fullname = req.body.fullname;
     var phone = req.body.phone;
@@ -108,17 +118,9 @@ module.exports = (app, models) => {
           if (account) {
             var storedHash = account.get('password')
             verifyPassword(storedHash, password).then(
-              result => {         
+              result => {
                 if (result) {
-                  let token = jwt.sign(
-                    { id: account.get('id') },
-                    jwtSecret,
-                    { expiresIn: '24h' }
-                  );
-                  res.status(200).send({
-                    token: token,
-                    fullname: account.get('fullname')
-                  })
+                  res.status(200).send(userInfo(account.get('id'), account.get('fullname')))
                 } else {
                   res.status(403).send(msgs.InvalidCredentials()) // No coincide el password
                 }
@@ -176,7 +178,7 @@ module.exports = (app, models) => {
         { returning: true, where: { id: account_id } }
       ).then(
         () => {
-          res.status(200).send()
+          res.status(200).send(userInfo(account_id, req.body.fullname))
         }
       ).catch(
         err => { res.status(500).send() }
