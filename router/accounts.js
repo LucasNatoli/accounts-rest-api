@@ -178,7 +178,7 @@ module.exports = (app, models) => {
         { returning: true, where: { id: account_id } }
       ).then(
         () => {
-          res.status(200).send(userInfo(account_id, req.body.fullname))
+          res.status(200).send(updateValues)
         }
       ).catch(
         err => { res.status(500).send() }
