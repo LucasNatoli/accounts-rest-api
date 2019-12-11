@@ -65,6 +65,7 @@ This service provides the following endpoints:
 | [check-token](#check-token)  | /v1/accounts  | GET   | Check authorization header for valid JWT token |
 | [login](#login)        | /v1/accounts  | POST  | Process login request |
 | [register](#register)     | /v1/accounts  | POST  | Register an account |
+| [status](#status)     | /v1/accounts  | GET  | Returns server status |
 
 ## Account Info GET
 
@@ -173,6 +174,26 @@ POST /v1/accounts/register
 NONE
 ```
 
+## Status
+
+Returns server status
+```
+POST /v1/accounts/status
+```
+
+**Request Body:**
+```
+NONE
+```
+
+**Response:**
+```javascript
+{
+  "serverTime": 1576029283
+  "version": "1.0",
+  "endPoint": "/v1/accounts",
+}
+```
 
 ## Dependencies 
 

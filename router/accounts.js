@@ -73,6 +73,13 @@ function userInfo(id, fullname) {
 }
 
 module.exports = (app, models) => {
+  app.get(END_POINT + '/status', (req, res) => {
+    res.status(200).send({
+      serverTime: Math.floor(Date.now() / 1000),
+      version: '1.0',
+      endPoint: END_POINT
+    })
+  })
 
   app.post(END_POINT + '/register', (req, res) => {
     var fullname = req.body.fullname;
