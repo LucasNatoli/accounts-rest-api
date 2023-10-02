@@ -1,4 +1,4 @@
-# Node.js-Accounts-REST-API
+# Accounts Restful API
 
 This service is a boilerplate to start new applications. It provides a
 restful API for user accounts management.
