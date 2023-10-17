@@ -1,34 +1,33 @@
 {
   "name": "accounts-rest-api",
   "version": "1.0.0",
-  "description": "Restful API for user accounts management.",
+  "description": "Restful API for accounts management",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LucasNatoli/Node.js-Accounts-REST-API.git"
+    "url": "git+https://github.com/LucasNatoli/accounts-rest-api.git"
   },
   "keywords": [
-    "REST",
-    "API",
-    "NODE.JS",
-    "HASH",
-    "SALT"
+    "rest",
+    "api",
+    "accounts",
+    "node.js"
   ],
   "author": "Lucas Natoli",
-  "license": "GPL-3.0-or-later",
+  "license": "ISC",
   "bugs": {
-    "url": "https://github.com/LucasNatoli/Node.js-Accounts-REST-API/issues"
+    "url": "https://github.com/LucasNatoli/accounts-rest-api/issues"
   },
-  "homepage": "https://github.com/LucasNatoli/Node.js-Accounts-REST-API#readme",
+  "homepage": "https://github.com/LucasNatoli/accounts-rest-api#readme",
   "dependencies": {
-    "body-parser": "^1.19.0",
+    "body-parser": "^1.20.2",
     "credential": "^2.0.0",
-    "express": "^4.17.1",
-    "jsonwebtoken": "^8.5.1",
-    "mysql2": "^2.0.0",
-    "sequelize": "^5.21.2"
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.6.2",
+    "sequelize": "^6.33.0"
   }
 }
